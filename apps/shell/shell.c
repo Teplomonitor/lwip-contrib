@@ -102,6 +102,7 @@ clos [connection #]: closes a TCP or UDP connection."NEWLINE"\
 stat: prints out lwIP statistics."NEWLINE"\
 idxtoname [index]: outputs interface name from index."NEWLINE"\
 nametoidx [name]: outputs interface index from name."NEWLINE"\
+gethostnm [name]: outputs IP address of host."NEWLINE"\
 quit: quits"NEWLINE"";
 
 #if LWIP_STATS
@@ -886,7 +887,7 @@ com_udpb(struct command *com)
   }
 
 #if LWIP_IPV4
-  if (IP_IS_V6(&ipaddr)) {
+  if (IP_IS_V6_VAL(ipaddr)) {
     err = netconn_bind(conns[i], &ip_addr_broadcast, lport);
     if (err != ERR_OK) {
       netconn_delete(conns[i]);
@@ -969,7 +970,7 @@ com_idxtoname(struct command *com)
 {
   long i = strtol(com->args[0], NULL, 10);
 
-  if (if_indextoname(i, (char *)buffer)) {
+  if (if_indextoname((unsigned int)i, (char *)buffer)) {
     netconn_write(com->conn, buffer, strlen((const char *)buffer), NETCONN_COPY);
     sendstr(NEWLINE, com->conn);
   } else {
@@ -993,6 +994,28 @@ com_nametoidx(struct command *com)
   return ESUCCESS;
 }
 #endif /* LWIP_SOCKET */
+/*-----------------------------------------------------------------------------------*/
+#if LWIP_DNS
+static s8_t
+com_gethostbyname(struct command *com)
+{
+  ip_addr_t addr;
+  err_t err = netconn_gethostbyname(com->args[0], &addr);
+
+  if (err == ERR_OK) {
+    if (ipaddr_ntoa_r(&addr, (char *)buffer, sizeof(buffer))) {
+      sendstr("Host found: ", com->conn);
+      sendstr((char *)buffer, com->conn);
+      sendstr(NEWLINE, com->conn);
+    } else {
+        sendstr("ipaddr_ntoa_r failed", com->conn);
+    }
+  } else {
+    sendstr("No host found"NEWLINE, com->conn);
+  }
+  return ESUCCESS;
+}
+#endif /* LWIP_DNS */
 /*-----------------------------------------------------------------------------------*/
 static s8_t
 com_help(struct command *com)
@@ -1054,6 +1077,11 @@ parse_command(struct command *com, u32_t len)
     com->exec = com_nametoidx;
     com->nargs = 1;
 #endif /* LWIP_SOCKET */
+#if LWIP_DNS
+  } else if (strncmp((const char *)buffer, "gethostnm", 9) == 0) {
+    com->exec = com_gethostbyname;
+    com->nargs = 1;
+#endif /* LWIP_DNS */
   } else if (strncmp((const char *)buffer, "help", 4) == 0) {
     com->exec = com_help;
     com->nargs = 0;
@@ -1150,9 +1178,12 @@ shell_main(struct netconn *conn)
   do {
     ret = netconn_recv_tcp_pbuf(conn, &p);
     if (ret == ERR_OK) {
-      pbuf_copy_partial(p, &buffer[len], BUFSIZE - len, 0);
+      pbuf_copy_partial(p, &buffer[len], (u16_t)(BUFSIZE - len), 0);
       cur_len = p->tot_len;
-      len += cur_len;
+      len = (u16_t)(len + cur_len);
+      if ((len < cur_len) || (len > BUFSIZE)) {
+        len = BUFSIZE;
+      }
 #if SHELL_ECHO
       echomem = mem_malloc(cur_len);
       if (echomem != NULL) {
