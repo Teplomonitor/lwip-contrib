@@ -36,8 +36,9 @@
 #define LWIP_IPV6                  1
 
 #define NO_SYS                     0
-#define LWIP_SOCKET               (NO_SYS==0)
-#define LWIP_NETCONN              (NO_SYS==0)
+#define LWIP_SOCKET                (NO_SYS==0)
+#define LWIP_NETCONN               (NO_SYS==0)
+#define LWIP_NETIF_API             (NO_SYS==0)
 
 #define LWIP_IGMP                  LWIP_IPV4
 #define LWIP_ICMP                  LWIP_IPV4
@@ -135,7 +136,7 @@ a lot of data that needs to be copied, this should be set high. */
 #define MEMP_NUM_TCP_SEG        16
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
    timeouts. */
-#define MEMP_NUM_SYS_TIMEOUT    15
+#define MEMP_NUM_SYS_TIMEOUT    17
 
 /* The following four are used only with the sequential API and can be
    set to 0 if the application only will use the raw API. */
