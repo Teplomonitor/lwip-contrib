@@ -69,7 +69,15 @@ u32_t sys_win_rand(void)
 static void sys_win_rand_init(void)
 {
   if(!CryptAcquireContext(&hcrypt, NULL, NULL, PROV_RSA_FULL, 0)) {
-    LWIP_ASSERT("CryptAcquireContext failed", 0);
+    DWORD err = GetLastError();
+    LWIP_PLATFORM_DIAG(("CryptAcquireContext failed with error %d, trying to create NEWKEYSET", (int)err));
+    if(!CryptAcquireContext(&hcrypt, NULL, NULL, PROV_RSA_FULL, CRYPT_NEWKEYSET)) {
+      DWORD err = GetLastError();
+      char errbuf[128];
+      snprintf(errbuf, sizeof(errbuf), "CryptAcquireContext failed with error %d", (int)err);
+      LWIP_UNUSED_ARG(err);
+      LWIP_ASSERT(errbuf, 0);
+    }
   }
 }
 
@@ -584,3 +592,21 @@ void sys_arch_netconn_sem_free(void)
 #endif /* LWIP_NETCONN_SEM_PER_THREAD */
 
 #endif /* !NO_SYS */
+
+/* get keyboard state to terminate the debug app on any kbhit event using win32 API */
+int lwip_win32_keypressed(void)
+{
+  INPUT_RECORD rec;
+  DWORD num = 0;
+  HANDLE h = GetStdHandle(STD_INPUT_HANDLE);
+  BOOL ret = PeekConsoleInput(h, &rec, 1, &num);
+  if (ret) {
+    if(rec.EventType == KEY_EVENT) {
+      if(rec.Event.KeyEvent.bKeyDown) {
+        return 1;
+      }
+    }
+    ReadConsoleInput(h, &rec, 1, &num);
+  }
+  return 0;
+}

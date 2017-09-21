@@ -36,7 +36,6 @@
 #include <stdarg.h>
 #include <time.h>
 #include <string.h>
-#include <conio.h>
 
 /* lwIP core includes */
 #include "lwip/opt.h"
@@ -535,7 +534,7 @@ apps_init(void)
 #endif /* LWIP_CHARGEN_APP && LWIP_SOCKET */
 
 #if LWIP_PING_APP && LWIP_RAW && LWIP_ICMP
-  ping_init();
+  ping_init(&netif.gw);
 #endif /* LWIP_PING_APP && LWIP_RAW && LWIP_ICMP */
 
 #if LWIP_NETBIOS_APP && LWIP_UDP
@@ -575,9 +574,9 @@ apps_init(void)
   rtp_init();
 #endif /* LWIP_RTP_APP && LWIP_SOCKET && LWIP_IGMP */
 
-#if LWIP_SNTP_APP && LWIP_SOCKET
+#if LWIP_SNTP_APP
   sntp_init();
-#endif /* LWIP_SNTP_APP && LWIP_SOCKET */
+#endif /* LWIP_SNTP_APP */
 
 #if LWIP_SHELL_APP && LWIP_NETCONN
   shell_init();
@@ -676,7 +675,7 @@ main_loop(void)
 #endif
 
   /* MAIN LOOP for driver update (and timers if NO_SYS) */
-  while (!_kbhit()) {
+  while (!lwip_win32_keypressed()) {
 #if NO_SYS
     /* handle timers (already done in tcpip.c when NO_SYS=0) */
     sys_check_timeouts();
