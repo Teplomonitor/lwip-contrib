@@ -76,7 +76,11 @@
 #include "apps/udpecho/udpecho.h"
 #include "apps/tcpecho_raw/tcpecho_raw.h"
 #include "apps/socket_examples/socket_examples.h"
-#include "apps/snmp_v3/snmpv3_dummy.h"
+
+#include "examples/snmp/snmp_v3/snmpv3_dummy.h"
+
+#include "examples/httpd/fs_example/fs_example.h"
+#include "examples/httpd/ssi_example/ssi_example.h"
 
 #if NO_SYS
 /* ... then we need information about the timer intervals: */
@@ -367,9 +371,7 @@ msvc_netif_init(void)
 #endif /* NO_SYS */
 #if LWIP_IPV6
   netif_create_ip6_linklocal_address(&netif, 1);
-  printf("ip6 linklocal address: ");
-  ip6_addr_debug_print(0xFFFFFFFF & ~LWIP_DBG_HALT, netif_ip6_addr(&netif, 0));
-  printf("\n");
+  printf("ip6 linklocal address: %s\n", ip6addr_ntoa(netif_ip6_addr(&netif, 0)));
 #endif /* LWIP_IPV6 */
 #if LWIP_NETIF_STATUS_CALLBACK
   netif_set_status_callback(&netif, status_callback);
@@ -431,9 +433,7 @@ msvc_netif_init(void)
 #endif /* !USE_ETHERNET */
 #if LWIP_IPV6
   netif_create_ip6_linklocal_address(&slipif1, 1);
-  printf("SLIP ip6 linklocal address: ");
-  ip6_addr_debug_print(0xFFFFFFFF & ~LWIP_DBG_HALT, netif_ip6_addr(&slipif1, 0));
-  printf("\n");
+  printf("SLIP ip6 linklocal address: %s\n", ip6addr_ntoa(netif_ip6_addr(&netif, 0)));
 #endif /* LWIP_IPV6 */
 #if LWIP_NETIF_STATUS_CALLBACK
   netif_set_status_callback(&slipif1, status_callback);
@@ -552,7 +552,13 @@ apps_init(void)
 #ifdef LWIP_HTTPD_APP_NETCONN
   http_server_netconn_init();
 #else /* LWIP_HTTPD_APP_NETCONN */
+#if defined(LWIP_HTTPD_EXAMPLE_CUSTOMFILES) && LWIP_HTTPD_EXAMPLE_CUSTOMFILES && defined(LWIP_HTTPD_EXAMPLE_CUSTOMFILES_ROOTDIR)
+  fs_ex_init(LWIP_HTTPD_EXAMPLE_CUSTOMFILES_ROOTDIR);
+#endif
   httpd_init();
+#if defined(LWIP_HTTPD_EXAMPLE_SSI_SIMPLE) && LWIP_HTTPD_EXAMPLE_SSI_SIMPLE
+  ssi_ex_init();
+#endif
 #endif /* LWIP_HTTPD_APP_NETCONN */
 #endif /* LWIP_HTTPD_APP && LWIP_TCP */
 
@@ -643,6 +649,7 @@ test_init(void * arg)
 static void
 main_loop(void)
 {
+  char key;
 #if !NO_SYS
   err_t err;
   sys_sem_t init_sem;
@@ -675,7 +682,7 @@ main_loop(void)
 #endif
 
   /* MAIN LOOP for driver update (and timers if NO_SYS) */
-  while (!lwip_win32_keypressed()) {
+  while (!lwip_win32_keypressed(&key) || (key == 0)) {
 #if NO_SYS
     /* handle timers (already done in tcpip.c when NO_SYS=0) */
     sys_check_timeouts();
