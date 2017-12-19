@@ -56,7 +56,6 @@
 #if SENSORS_SEARCH_FILES
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <ctype.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <dirent.h>
@@ -161,7 +160,7 @@ static const struct snmp_tree_node enterprises_node = SNMP_CREATE_TREE_NODE(1, e
 static const struct snmp_node* const private_nodes[] = {
   &enterprises_node.node
 };
-static const struct snmp_tree_node private_root = SNMP_CREATE_TREE_NODE(0, private_nodes);
+static const struct snmp_tree_node private_root = SNMP_CREATE_TREE_NODE(4, private_nodes);
 
 static const u32_t prvmib_base_oid[] = { 1,3,6,1,4 };
 const struct snmp_mib mib_private = SNMP_MIB_CREATE(prvmib_base_oid, &private_root.node);
@@ -215,7 +214,7 @@ lwip_privmib_init(void)
           while (cp < ebuf)
           {
             dp = (struct dirent *)cp;
-            if (isdigit(dp->d_name[0]))
+            if (lwip_isdigit(dp->d_name[0]))
             {
               unsigned char idx = dp->d_name[0] - '0';
 
