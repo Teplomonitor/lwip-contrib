@@ -67,7 +67,7 @@
     <Filter Include="arch">
       <UniqueIdentifier>{2e87d0f7-38a3-45f8-870d-f8622c20e9d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\apps\httpd">
+    <Filter Include="src\apps\http">
       <UniqueIdentifier>{45f6a578-1f4b-4741-9b55-5b5084ecc1d9}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\apps\mdns">
@@ -109,6 +109,9 @@
     <Filter Include="src\include\compat\stdc">
       <UniqueIdentifier>{15855a74-48c6-473c-b4cb-40ec065698d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="example_app">
+      <UniqueIdentifier>{2c795490-531d-4a03-b30d-73760b09975a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\..\lwip\CHANGELOG" />
@@ -128,13 +131,7 @@
     <None Include="..\..\..\..\lwip\doc\ppp.txt">
       <Filter>doc</Filter>
     </None>
-    <None Include="..\..\..\..\lwip\doc\rawapi.txt">
-      <Filter>doc</Filter>
-    </None>
     <None Include="..\..\..\..\lwip\doc\savannah.txt">
-      <Filter>doc</Filter>
-    </None>
-    <None Include="..\..\..\..\lwip\doc\sys_arch.txt">
       <Filter>doc</Filter>
     </None>
     <None Include="..\..\..\..\lwip\doc\doxygen\generate.bat">
@@ -145,6 +142,9 @@
     </None>
     <None Include="..\..\..\..\lwip\doc\doxygen\lwip.Doxyfile">
       <Filter>doc\doxygen</Filter>
+    </None>
+    <None Include="..\..\..\examples\example_app\lwipcfg.h.example">
+      <Filter>example_app</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -274,9 +274,6 @@
     <ClCompile Include="..\..\..\..\lwip\src\netif\ethernet.c">
       <Filter>src\netif</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\lwip\src\netif\ethernetif.c">
-      <Filter>src\netif</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\lwip\src\netif\lowpan6.c">
       <Filter>src\netif</Filter>
     </ClCompile>
@@ -376,14 +373,14 @@
     <ClCompile Include="..\sys_arch.c">
       <Filter>arch</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\lwip\src\apps\httpd\httpd.c">
-      <Filter>src\apps\httpd</Filter>
+    <ClCompile Include="..\..\..\..\lwip\src\apps\http\httpd.c">
+      <Filter>src\apps\http</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\lwip\src\apps\httpd\fsdata.c">
-      <Filter>src\apps\httpd</Filter>
+    <ClCompile Include="..\..\..\..\lwip\src\apps\http\fsdata.c">
+      <Filter>src\apps\http</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\lwip\src\apps\httpd\fs.c">
-      <Filter>src\apps\httpd</Filter>
+    <ClCompile Include="..\..\..\..\lwip\src\apps\http\fs.c">
+      <Filter>src\apps\http</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\lwip\src\apps\snmp\snmp_asn1.c">
       <Filter>src\apps\snmp</Filter>
@@ -500,6 +497,24 @@
       <Filter>src\apps\smtp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\lwip\src\netif\bridgeif_fdb.c">
+      <Filter>src\netif</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\apps\http\http_client.c">
+      <Filter>src\apps\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\core\altcp_alloc.c">
+      <Filter>src\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\apps\http\altcp_proxyconnect.c">
+      <Filter>src\apps\http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\netif\lowpan6_ble.c">
+      <Filter>src\netif</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\netif\zepif.c">
+      <Filter>src\netif</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\lwip\src\netif\lowpan6_common.c">
       <Filter>src\netif</Filter>
     </ClCompile>
   </ItemGroup>
@@ -759,15 +774,6 @@
     <ClInclude Include="..\include\arch\epstruct.h">
       <Filter>arch</Filter>
     </ClInclude>
-    <ClInclude Include="..\lwipcfg_msvc.h">
-      <Filter>arch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\lwipopts.h">
-      <Filter>arch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\lwippools.h">
-      <Filter>arch</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\arch\perf.h">
       <Filter>arch</Filter>
     </ClInclude>
@@ -789,11 +795,11 @@
     <ClInclude Include="..\..\..\..\lwip\src\include\lwip\priv\api_msg.h">
       <Filter>src\include\lwip\priv</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\lwip\src\apps\httpd\httpd_structs.h">
-      <Filter>src\apps\httpd</Filter>
+    <ClInclude Include="..\..\..\..\lwip\src\apps\http\httpd_structs.h">
+      <Filter>src\apps\http</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\lwip\src\apps\httpd\fsdata.h">
-      <Filter>src\apps\httpd</Filter>
+    <ClInclude Include="..\..\..\..\lwip\src\apps\http\fsdata.h">
+      <Filter>src\apps\http</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\lwip\src\apps\snmp\snmp_asn1.h">
       <Filter>src\apps\snmp</Filter>
@@ -996,10 +1002,47 @@
     <ClInclude Include="..\..\..\..\lwip\src\include\lwip\prot\ieee.h">
       <Filter>src\include\lwip\prot</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuildStep Include="..\lwipcfg_msvc.h.example">
-      <Filter>arch</Filter>
-    </CustomBuildStep>
+    <ClInclude Include="..\..\..\..\lwip\src\include\lwip\priv\raw_priv.h">
+      <Filter>src\include\lwip\priv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\lwip\priv\mem_priv.h">
+      <Filter>src\include\lwip\priv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\lwip\apps\http_client.h">
+      <Filter>src\include\lwip\apps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\lwip\apps\altcp_proxyconnect.h">
+      <Filter>src\include\lwip\apps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\lwip\prot\dhcp6.h">
+      <Filter>src\include\lwip\prot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\netif\lowpan6_ble.h">
+      <Filter>src\include\netif</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\netif\ieee802154.h">
+      <Filter>src\include\netif</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\netif\zepif.h">
+      <Filter>src\include\netif</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\lwip\src\include\netif\lowpan6_common.h">
+      <Filter>src\include\netif</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\example_app\default_netif.h">
+      <Filter>example_app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\example_app\lwipcfg.h">
+      <Filter>example_app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\example_app\lwipopts.h">
+      <Filter>example_app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\example_app\lwippools.h">
+      <Filter>example_app</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\examples\example_app\ppp_settings.h">
+      <Filter>example_app</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

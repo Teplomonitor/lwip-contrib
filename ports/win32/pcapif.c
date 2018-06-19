@@ -35,7 +35,7 @@
  */
 
 /* include the port-dependent configuration */
-#include "lwipcfg_msvc.h"
+#include "lwipcfg.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -135,15 +135,6 @@
 #define PCAPIF_LINKUP_DELAY           0
 #endif
 
-/* Define PCAPIF_RX_LOCK_LWIP and PCAPIF_RX_UNLOCK_LWIP if you need to lock the lwIP core
-   before/after pbuf_alloc() or netif->input() are called on RX. */
-#ifndef PCAPIF_RX_LOCK_LWIP
-#define PCAPIF_RX_LOCK_LWIP()
-#endif
-#ifndef PCAPIF_RX_UNLOCK_LWIP
-#define PCAPIF_RX_UNLOCK_LWIP()
-#endif
-
 #define PCAPIF_LINKCHECK_INTERVAL_MS 500
 
 /* link state notification macro */
@@ -154,6 +145,15 @@
 #endif /* PHY_LINKUP_DELAY */
 
 #endif /* PCAPIF_HANDLE_LINKSTATE */
+
+/* Define PCAPIF_RX_LOCK_LWIP and PCAPIF_RX_UNLOCK_LWIP if you need to lock the lwIP core
+   before/after pbuf_alloc() or netif->input() are called on RX. */
+#ifndef PCAPIF_RX_LOCK_LWIP
+#define PCAPIF_RX_LOCK_LWIP()
+#endif
+#ifndef PCAPIF_RX_UNLOCK_LWIP
+#define PCAPIF_RX_UNLOCK_LWIP()
+#endif
 
 #define ETH_MIN_FRAME_LEN      60U
 #define ETH_MAX_FRAME_LEN      1518U
@@ -776,6 +776,9 @@ pcapif_low_level_init(struct netif *netif)
     netif_set_link_up(netif);
   }
   sys_timeout(PCAPIF_LINKCHECK_INTERVAL_MS, pcapif_check_linkstate, netif);
+#else /* PCAPIF_HANDLE_LINKSTATE */
+  /* just set the link up so that lwIP can transmit */
+  netif_set_link_up(netif);
 #endif /* PCAPIF_HANDLE_LINKSTATE */
 
 #if PCAPIF_RX_USE_THREAD
@@ -1027,6 +1030,8 @@ pcapif_init(struct netif *netif)
   SYS_ARCH_PROTECT(lev);
   local_index = ethernetif_index++;
   SYS_ARCH_UNPROTECT(lev);
+
+  LWIP_ASSERT("pcapif needs an input callback", netif->input != NULL);
 
   netif->name[0] = IFNAME0;
   netif->name[1] = (char)(IFNAME1 + local_index);
