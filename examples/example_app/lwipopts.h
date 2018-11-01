@@ -32,6 +32,10 @@
 #ifndef LWIP_LWIPOPTS_H
 #define LWIP_LWIPOPTS_H
 
+#ifdef LWIP_OPTTEST_FILE
+#include "lwipopts_test.h"
+#else /* LWIP_OPTTEST_FILE */
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  1
 
@@ -65,20 +69,6 @@
 #define LWIP_SO_RCVBUF             1
 
 #define LWIP_TCPIP_CORE_LOCKING    1
-
-#if !NO_SYS
-void sys_check_core_locking(void);
-#define LWIP_ASSERT_CORE_LOCKED()  sys_check_core_locking()
-void sys_mark_tcpip_thread(void);
-#define LWIP_MARK_TCPIP_THREAD()   sys_mark_tcpip_thread()
-
-#if LWIP_TCPIP_CORE_LOCKING
-void sys_lock_tcpip_core(void);
-#define LOCK_TCPIP_CORE()          sys_lock_tcpip_core()
-void sys_unlock_tcpip_core(void);
-#define UNLOCK_TCPIP_CORE()        sys_unlock_tcpip_core()
-#endif
-#endif
 
 #define LWIP_NETIF_LINK_CALLBACK        1
 #define LWIP_NETIF_STATUS_CALLBACK      1
@@ -168,10 +158,10 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE          160
+#define PBUF_POOL_SIZE          120
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
-#define PBUF_POOL_BUFSIZE       128
+#define PBUF_POOL_BUFSIZE       256
 
 /** SYS_LIGHTWEIGHT_PROT
  * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
@@ -212,7 +202,7 @@ a lot of data that needs to be copied, this should be set high. */
 #define TCP_SNDLOWAT           (TCP_SND_BUF/2)
 
 /* TCP receive window. */
-#define TCP_WND                 8096
+#define TCP_WND                 (20 * 1024)
 
 /* Maximum number of retransmissions of data segments. */
 #define TCP_MAXRTX              12
@@ -317,5 +307,23 @@ a lot of data that needs to be copied, this should be set high. */
 #define MD5_SUPPORT             1      /* Set > 0 for MD5 (see also CHAP) */
 
 #endif /* PPP_SUPPORT */
+
+#endif /* LWIP_OPTTEST_FILE */
+
+/* The following defines must be done even in OPTTEST mode: */
+
+#if !defined(NO_SYS) || !NO_SYS /* default is 0 */
+void sys_check_core_locking(void);
+#define LWIP_ASSERT_CORE_LOCKED()  sys_check_core_locking()
+void sys_mark_tcpip_thread(void);
+#define LWIP_MARK_TCPIP_THREAD()   sys_mark_tcpip_thread()
+
+#if !defined(LWIP_TCPIP_CORE_LOCKING) || LWIP_TCPIP_CORE_LOCKING /* default is 1 */
+void sys_lock_tcpip_core(void);
+#define LOCK_TCPIP_CORE()          sys_lock_tcpip_core()
+void sys_unlock_tcpip_core(void);
+#define UNLOCK_TCPIP_CORE()        sys_unlock_tcpip_core()
+#endif
+#endif
 
 #endif /* LWIP_LWIPOPTS_H */
