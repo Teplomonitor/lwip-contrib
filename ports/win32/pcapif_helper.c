@@ -19,7 +19,8 @@
 #endif
 #include <windows.h>
 #include <packet32.h>
-#include <ntddndis.h>
+//#include <ntddndis.h>
+#include <ndis.h>
 #ifdef _MSC_VER
 #pragma warning ( pop )
 #endif
