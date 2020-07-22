@@ -19,11 +19,13 @@
 #endif
 #include <windows.h>
 #include <packet32.h>
-#ifdef _MSC_VER
+
+#if CFG_USE_NDIS_INCLUDE
 #include <ndis.h>
 #else
 #include <ntddndis.h>
 #endif
+
 #ifdef _MSC_VER
 #pragma warning ( pop )
 #endif
