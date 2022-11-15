@@ -6,7 +6,7 @@ sources = Split("""
 	""")
 
 
-if targetEnv.has_key('SIMULATION'):
+if 'SIMULATION' in targetEnv:
 	sources.append('ports/win32/pcapif.c')
 	sources.append('ports/win32/pcapif_helper.c')
 
